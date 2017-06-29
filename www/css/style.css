@@ -1,0 +1,39 @@
+.deleteItem {
+  position: absolute;
+  right: 10px;
+  font-size: 23px;
+  z-index: 10;
+  color: rgb(209, 35, 35);
+}
+
+.list.item-checkbox {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.list.item-checkbox.title {
+  padding: 16px 0;
+  display: block;
+  color: red;
+}
+
+.item-checkbox .checkbox {
+  right: auto;
+}
+
+.item.checked .title {
+  color: grey;
+  text-decoration: line-through;
+}
+
+.toggle-item {
+  color: #929292;
+}
+input.ng-invalid {
+  border-bottom: 2px solid red;
+}
+
+.form-error {
+  padding: 2px 0 2px 16px;
+  color: red;
+}

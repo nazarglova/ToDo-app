@@ -17,7 +17,7 @@ angular.module('ToDo', ['ionic'])
       }
     });
   })
-  .controller("ToDoCtrl", function ($scope, $ionicModal, $timeout) {
+  .controller("ToDoCtrl", function ($scope, $ionicModal, $timeout, $interval) {
     if (!angular.isUndefined(window.localStorage['tasks'])) {
       $scope.tasks = JSON.parse(window.localStorage['tasks']);
     } else {
@@ -27,6 +27,19 @@ angular.module('ToDo', ['ionic'])
         {title: 'sell', description: 'You must buy', done: true},
       ];
     }
+    if (!angular.isUndefined(window.localStorage['sortBy'])) {
+      $scope.sortBy = window.localStorage['sortBy'];
+    } else {
+      $scope.sortBy = 'date';
+    }
+
+
+    $scope.arrSortBy = {
+      Created: 'date',
+      Name: "title",
+      Finished: "!done",
+      Unfinished: "done"
+    };
 
     $ionicModal.fromTemplateUrl('views/task.html', function (modal) {
       $scope.taskModal = modal;
@@ -42,13 +55,15 @@ angular.module('ToDo', ['ionic'])
       $scope.activeTask = {
         title: '',
         description: '',
-        done: false
+        done: false,
       }
       $scope.currentTaskId = -1;
     }
+
     $scope.closeTask = function () {
       $scope.taskModal.hide();
     }
+
     $scope.openTask = function (id) {
       var task = $scope.tasks[id];
       $scope.currentTaskId = id;
@@ -59,16 +74,18 @@ angular.module('ToDo', ['ionic'])
       }
       $scope.taskModal.show();
     }
+
     $scope.deleteTask = function (id) {
       $scope.tasks.splice(id, 1);
       saveItems();
     }
+
     $scope.submitTask = function (task) {
-      if ($scope.currentTaskId == -1) {
+      if ($scope.currentTaskId === -1) {
         $scope.tasks.push({
           title: task.title,
           description: task.description,
-          done: task.done
+          done: task.done,
         });
       } else {
         var id = $scope.currentTaskId;
@@ -81,12 +98,32 @@ angular.module('ToDo', ['ionic'])
 
       $scope.taskModal.hide();
     }
+
+    $scope.saveSortBy = function (value) {
+      window.localStorage['sortBy'] = value;
+      console.log(value)
+      function compareTasks(a, b) {
+        if (parseInt(a[value])) {
+          return a[value] - b[value];
+        }
+        return a[value].toString().toLowerCase() > b[value].toString().toLowerCase();
+      }
+
+      $scope.tasks.sort(compareTasks);
+
+      saveItems();
+    }
+
+    $interval(function () {
+      $scope.theTime = new Date().toLocaleTimeString();
+    }, 1000);
+
     $scope.saveTasks = function () {
       $timeout(function () {
         saveItems();
       });
     }
-    $scope.rng = 5;
+
     function saveItems() {
       window.localStorage['tasks'] = angular.toJson($scope.tasks);
     }

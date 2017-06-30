@@ -9,10 +9,10 @@
     <form name="taskForm" ng-submit="submitTask(activeTask)">
       <div class="list">
         <label class="item-input">
-          <input type="text" placeholder="What do?" ng-model="activeTask.title" required>
+          <input name="title" type="text" placeholder="What do?" ng-model="activeTask.title" required>
         </label>
         <div class="form-errors" >
-          <span class="form-error" ng-show="!activeTask.title">
+          <span class="form-error" ng-show="taskForm.title.$invalid">
             Arrea can't be empty!
           </span>
         </div>

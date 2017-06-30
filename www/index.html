@@ -41,9 +41,21 @@
   </ion-header-bar>
 
   <ion-content>
-    <div class="padding">Unfinished tasks:  {{(tasks | filter : {done : false}).length}}</div>
+    <div class="padding">Unfinished tasks: {{(tasks | filter : {done : false}).length}}</div>
+    <div class="list list-inset">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Sort by:
+        </div>
+
+        <select ng-model="sortBy" ng-change="saveSortBy(sortBy)" ng-options="x for (x, y) in arrSortBy">
+        </select>
+      </label>
+    </div>
+
     <ion-list>
-      <ion-item ng-repeat="task in tasks" class="item item-checkbox item-icon-right" ng-class="{'checked':task.done}">
+      <ion-item ng-repeat="task in tasks" class="item item-checkbox item-icon-right"
+                ng-class="{'checked':task.done}">
         <label class="checkbox">
           <input type="checkbox" ng-model="task.done" ng-click="saveTasks()">
         </label>
@@ -51,6 +63,7 @@
         <i class="ion-close-circled deleteItem" ng-click="deleteTask($index)"></i>
       </ion-item>
     </ion-list>
+    <h1 class="list card padding text-center">{{theTime}}</h1>
   </ion-content>
 
 

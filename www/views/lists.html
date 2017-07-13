@@ -1,0 +1,62 @@
+<ion-view title="ToDo" hide-back-button="true">
+  <!--<ion-nav-buttons side="left">-->
+    <!--<a class="button ion-information" ui-sref="info">-->
+      <!--Info-->
+    <!--</a>-->
+  <!--</ion-nav-buttons>-->
+  <!--<ion-nav-buttons side="left">-->
+    <!--<button class="button button-icon button-clear ion-navicon" ng-click="toggleLeft()">-->
+    <!--</button>-->
+  <!--</ion-nav-buttons>-->
+  <ion-nav-buttons side="right">
+    <button class="button ion-plus" ng-click="addNewTask()"></button>
+  </ion-nav-buttons>
+
+  <div class="bar bar-subheader">
+    <div class="buttons">
+      <button class="button button-icon icon ion-ios-minus-outline"
+              ng-click="data.showDelete = !data.showDelete; data.showReorder = false"></button>
+    </div>
+    <h1 class="title">Lists</h1>
+
+    <div class="buttons">
+      <button class="button" ng-click="data.showDelete = false; data.showReorder = !data.showReorder">
+        Reorder
+      </button>
+    </div>
+  </div>
+
+  <ion-content class="has-subheader">
+
+
+    <label class="item-input item-select">
+      <div class="input-label">Sort by:</div>
+
+      <select ng-model="sortBy" ng-change="saveSortBy(sortBy)" ng-options="x for (x, y) in arrSortBy"></select>
+    </label>
+
+    <ion-list show-reorder="data.showReorder" show-delete="data.showDelete" can-swipe="true">
+
+      <ion-item ng-repeat="task in tasks"
+                class="item item-checkbox  item-remove-animate"
+                ng-class="{'checked':task.done}">
+
+        <label class="checkbox">
+          <input type="checkbox" ng-model="task.done" ng-click="saveTasks()">
+        </label>
+
+        <span class="title" ng-click="openTask($index)">{{task.title}}</span>
+
+        <ion-delete-button class="ion-minus-circled" ng-click="deleteTask($index)"></ion-delete-button>
+
+        <ion-reorder-button class="ion-navicon" on-reorder="moveItem(task, $fromIndex, $toIndex)"></ion-reorder-button>
+
+        <ion-option-button class="button-light icon ion-android-delete" ng-click="deleteTask($index)"></ion-option-button>
+        <ion-option-button class="button-light icon ion-heart"></ion-option-button>
+      </ion-item>
+
+    </ion-list>
+  </ion-content>
+
+
+</ion-view>

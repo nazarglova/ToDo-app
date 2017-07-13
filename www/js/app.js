@@ -1,5 +1,4 @@
 angular.module('ToDo', ['ionic'])
-
   .run(function ($ionicPlatform) {
     $ionicPlatform.ready(function () {
       if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -17,7 +16,61 @@ angular.module('ToDo', ['ionic'])
       }
     });
   })
-  .controller("ToDoCtrl", function ($scope, $ionicModal, $timeout, $interval) {
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('eventmenu', {
+        url: "/event",
+        // abstract: true,
+        templateUrl: "views/menu.html"
+      })
+      .state('eventmenu.home', {
+        url: "/home",
+        views: {
+          'menuContent' :{
+            templateUrl: "views/lists.html",
+          }
+        }
+      })
+      .state('eventmenu.info', {
+        url: "/info",
+        views: {
+          'menuContent' :{
+            templateUrl: "views/info.html",
+          }
+        }
+      })
+      .state('eventmenu.buttons', {
+        url: "/buttons",
+        views: {
+          'menuContent' :{
+            templateUrl: "views/buttons.html",
+          }
+        }
+      })
+    $urlRouterProvider.otherwise("/event/home");
+
+  })
+  .controller("ToDoCtrl", function ($scope, $ionicModal, $ionicActionSheet, $timeout,$ionicSideMenuDelegate) {
+    $scope.toggleLeft = function() {
+      $ionicSideMenuDelegate.toggleLeft();
+    };
+
+    $scope.$on("$ionicView.leave", function (event, data) {
+      // handle event
+      console.log("State Params: ", event);
+    });
+
+    $scope.doRefresh = function () {
+      $scope.$broadcast('scroll.refreshComplete');
+
+    };
+
+    $scope.moveItem = function (item, fromIndex, toIndex) {
+      $scope.tasks.splice(fromIndex, 1);
+      $scope.tasks.splice(toIndex, 0, item);
+      saveItems();
+    };
+
     if (!angular.isUndefined(window.localStorage['tasks'])) {
       $scope.tasks = JSON.parse(window.localStorage['tasks']);
     } else {
@@ -35,9 +88,9 @@ angular.module('ToDo', ['ionic'])
 
 
     $scope.arrSortBy = {
-      Created: 'date',
+      // Created: 'date',
       Name: "title",
-      Finished: "!done",
+      // Finished: "!done",
       Unfinished: "done"
     };
 
@@ -45,7 +98,8 @@ angular.module('ToDo', ['ionic'])
       $scope.taskModal = modal;
     }, {
       scope: $scope,
-      animation: 'slide-in-up'
+      animation: 'slide-in-up',
+      focusFirstInput: true
     })
 
     $scope.currentTaskId = -1;
@@ -76,8 +130,20 @@ angular.module('ToDo', ['ionic'])
     }
 
     $scope.deleteTask = function (id) {
-      $scope.tasks.splice(id, 1);
-      saveItems();
+      $ionicActionSheet.show({
+        cancelText: 'Cancel',
+        destructiveText: 'Delete',
+        titleText: 'Are You Shure?',
+        destructiveButtonClicked: function () {
+
+          $scope.tasks.splice(id, 1);
+          saveItems();
+          return true
+        },
+        cancel: function () {
+          return false
+        }
+      });
     }
 
     $scope.submitTask = function (task) {
@@ -101,7 +167,7 @@ angular.module('ToDo', ['ionic'])
 
     $scope.saveSortBy = function (value) {
       window.localStorage['sortBy'] = value;
-      console.log(value)
+
       function compareTasks(a, b) {
         if (parseInt(a[value])) {
           return a[value] - b[value];
@@ -114,17 +180,41 @@ angular.module('ToDo', ['ionic'])
       saveItems();
     }
 
-    $interval(function () {
-      $scope.theTime = new Date().toLocaleTimeString();
-    }, 1000);
 
     $scope.saveTasks = function () {
       $timeout(function () {
         saveItems();
+        return true;
       });
     }
 
     function saveItems() {
       window.localStorage['tasks'] = angular.toJson($scope.tasks);
     }
+    $scope. vibration = function(t) {
+      navigator.vibrate(t);
+    console.log(t);
+    }
+    // $scope.play = function (src) {
+    //   var media = my_media = new Media(url,
+    //   $cordovaMedia.play(media)
+    // console.log(src);
+    // }
+    $scope.playAudio = function(url) {
+      // Play the audio file at url
+      var my_media = new Media(url,
+        // success callback
+        function () {
+          console.log("playAudio():Audio Success");
+        },
+        // error callback
+        function (err) {
+          console.log("playAudio():Audio Error: " + err);
+        }
+      );
+    console.log(url)
+      // Play audio
+      my_media.play();
+    }
+
   });

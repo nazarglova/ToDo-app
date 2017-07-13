@@ -10,7 +10,12 @@
   padding-top: 0;
   padding-bottom: 0;
 }
-
+.item.item-checkbox.item-remove-animate{
+  padding-left: 0;
+}
+.item.item-checkbox.item-remove-animate .title{
+  padding-left: 40px !important;
+}
 .list.item-checkbox.title {
   padding: 16px 0;
   display: block;
@@ -29,11 +34,14 @@
 .toggle-item {
   color: #929292;
 }
-input.ng-invalid {
+input.ng-touched.ng-invalid {
   border-bottom: 2px solid red;
 }
 
 .form-error {
   padding: 2px 0 2px 16px;
   color: red;
+}
+p{
+  text-indent:0.8em;
 }

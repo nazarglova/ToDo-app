@@ -11,13 +11,13 @@
         <label class="item-input">
           <input name="title" type="text" placeholder="What do?" ng-model="activeTask.title" required>
         </label>
-        <div class="form-errors" >
-          <span class="form-error" ng-show="taskForm.title.$invalid">
+        <div class="form-errors">
+          <span class="form-error" ng-if="taskForm.title.$touched && taskForm.title.$invalid" >
             Arrea can't be empty!
           </span>
         </div>
         <label class="item-input">
-          <textarea placeholder="Description" ng-model="activeTask.description" ></textarea>
+          <textarea placeholder="Description" ng-model="activeTask.description"></textarea>
         </label>
         <ul class="list">
           <li class="item item-toggle">
@@ -31,8 +31,12 @@
           </li>
         </ul>
         <div class="padding">
-          <button type="submit" class="button button-block button-positive" ng-if="currentTaskId == -1" ng-disabled="taskForm.$invalid">Add</button>
-          <button type="submit" class="button button-block button-positive" ng-if="currentTaskId > -1" ng-disabled="taskForm.$invalid">Save</button>
+          <button type="submit" class="button button-block button-positive" ng-if="currentTaskId == -1"
+                  ng-disabled="taskForm.$invalid">Add
+          </button>
+          <button type="submit" class="button button-block button-positive" ng-if="currentTaskId > -1"
+                  ng-disabled="taskForm.$invalid">Save
+          </button>
         </div>
       </div>
 

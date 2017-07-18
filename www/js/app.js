@@ -1,4 +1,4 @@
-angular.module('ToDo', ['ionic'])
+angular.module('ToDo', ['ionic', 'ngCordova'])
   .run(function ($ionicPlatform) {
     $ionicPlatform.ready(function () {
       if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -16,7 +16,7 @@ angular.module('ToDo', ['ionic'])
       }
     });
   })
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('eventmenu', {
         url: "/event",
@@ -26,7 +26,7 @@ angular.module('ToDo', ['ionic'])
       .state('eventmenu.home', {
         url: "/home",
         views: {
-          'menuContent' :{
+          'menuContent': {
             templateUrl: "views/lists.html",
           }
         }
@@ -34,7 +34,7 @@ angular.module('ToDo', ['ionic'])
       .state('eventmenu.info', {
         url: "/info",
         views: {
-          'menuContent' :{
+          'menuContent': {
             templateUrl: "views/info.html",
           }
         }
@@ -42,28 +42,23 @@ angular.module('ToDo', ['ionic'])
       .state('eventmenu.buttons', {
         url: "/buttons",
         views: {
-          'menuContent' :{
+          'menuContent': {
             templateUrl: "views/buttons.html",
           }
         }
       })
     $urlRouterProvider.otherwise("/event/home");
-
   })
-  .controller("ToDoCtrl", function ($scope, $ionicModal, $ionicActionSheet, $timeout,$ionicSideMenuDelegate) {
-    $scope.toggleLeft = function() {
+  .controller("ToDoCtrl", function ($scope, $ionicModal, $ionicActionSheet, $timeout, $ionicSideMenuDelegate, $cordovaMedia) {
+    $scope.$error = 'no error';
+
+    $scope.toggleLeft = function () {
       $ionicSideMenuDelegate.toggleLeft();
     };
 
-    $scope.$on("$ionicView.leave", function (event, data) {
-      // handle event
-      console.log("State Params: ", event);
+    $scope.$on("$ionicView.beforeEnter", function (event, data) {
+      $ionicSideMenuDelegate.toggleLeft(false);
     });
-
-    $scope.doRefresh = function () {
-      $scope.$broadcast('scroll.refreshComplete');
-
-    };
 
     $scope.moveItem = function (item, fromIndex, toIndex) {
       $scope.tasks.splice(fromIndex, 1);
@@ -83,14 +78,11 @@ angular.module('ToDo', ['ionic'])
     if (!angular.isUndefined(window.localStorage['sortBy'])) {
       $scope.sortBy = window.localStorage['sortBy'];
     } else {
-      $scope.sortBy = 'date';
+      $scope.sortBy = '';
     }
 
-
     $scope.arrSortBy = {
-      // Created: 'date',
       Name: "title",
-      // Finished: "!done",
       Unfinished: "done"
     };
 
@@ -100,7 +92,7 @@ angular.module('ToDo', ['ionic'])
       scope: $scope,
       animation: 'slide-in-up',
       focusFirstInput: true
-    })
+    });
 
     $scope.currentTaskId = -1;
 
@@ -109,14 +101,14 @@ angular.module('ToDo', ['ionic'])
       $scope.activeTask = {
         title: '',
         description: '',
-        done: false,
-      }
+        done: false
+      };
       $scope.currentTaskId = -1;
-    }
+    };
 
     $scope.closeTask = function () {
       $scope.taskModal.hide();
-    }
+    };
 
     $scope.openTask = function (id) {
       var task = $scope.tasks[id];
@@ -125,9 +117,9 @@ angular.module('ToDo', ['ionic'])
         title: task.title,
         description: task.description,
         done: task.done
-      }
+      };
       $scope.taskModal.show();
-    }
+    };
 
     $scope.deleteTask = function (id) {
       $ionicActionSheet.show({
@@ -135,7 +127,6 @@ angular.module('ToDo', ['ionic'])
         destructiveText: 'Delete',
         titleText: 'Are You Shure?',
         destructiveButtonClicked: function () {
-
           $scope.tasks.splice(id, 1);
           saveItems();
           return true
@@ -144,7 +135,7 @@ angular.module('ToDo', ['ionic'])
           return false
         }
       });
-    }
+    };
 
     $scope.submitTask = function (task) {
       if ($scope.currentTaskId === -1) {
@@ -159,62 +150,43 @@ angular.module('ToDo', ['ionic'])
         $scope.tasks[id].description = task.description;
         $scope.tasks[id].done = task.done;
       }
-
       saveItems();
-
       $scope.taskModal.hide();
-    }
+    };
 
     $scope.saveSortBy = function (value) {
       window.localStorage['sortBy'] = value;
-
       function compareTasks(a, b) {
         if (parseInt(a[value])) {
           return a[value] - b[value];
         }
         return a[value].toString().toLowerCase() > b[value].toString().toLowerCase();
       }
-
       $scope.tasks.sort(compareTasks);
-
       saveItems();
-    }
-
+    };
 
     $scope.saveTasks = function () {
       $timeout(function () {
         saveItems();
         return true;
       });
-    }
+    };
 
     function saveItems() {
       window.localStorage['tasks'] = angular.toJson($scope.tasks);
     }
-    $scope. vibration = function(t) {
-      navigator.vibrate(t);
-    console.log(t);
-    }
-    // $scope.play = function (src) {
-    //   var media = my_media = new Media(url,
-    //   $cordovaMedia.play(media)
-    // console.log(src);
-    // }
-    $scope.playAudio = function(url) {
-      // Play the audio file at url
-      var my_media = new Media(url,
-        // success callback
-        function () {
-          console.log("playAudio():Audio Success");
-        },
-        // error callback
-        function (err) {
-          console.log("playAudio():Audio Error: " + err);
-        }
-      );
-    console.log(url)
-      // Play audio
-      my_media.play();
-    }
 
+    $scope.vibration = function (t) {
+      navigator.vibrate(t);
+    };
+    $scope.play = function (src) {
+      try {
+        var media = $cordovaMedia.newMedia(src);
+        media.play();
+        $scope.$error = 'Finish! ' + src;
+      } catch (err) {
+        $scope.$error = err.name + '  ' + err.message;
+      }
+    };
   });

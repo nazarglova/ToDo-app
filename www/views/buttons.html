@@ -1,14 +1,13 @@
-<ion-view>
-  <ion-nav-title>Buttons</ion-nav-title>
-
-
+<ion-view hide-back-button="true" title="Buttons">
   <ion-content padding="true">
-    <button ng-click="vibration([2000,1000,2000])" class="button button-outline button-block button-dark">
+    <button ng-click="vibration([500,100,1000])" class="button button-outline button-block button-dark">
       Vibro
     </button>
-    <button ng-click="playAudio(android_asset/www/audio/song.mp3)" class="button button-outline button-block button-dark">
+    <button ng-click="play('/android_asset/www/audio/song.mp3')" class="button button-outline button-block button-dark">
       Play
     </button>
+    <div class="error">
+      {{$error}}
+    </div>
   </ion-content>
-
 </ion-view>

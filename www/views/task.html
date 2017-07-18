@@ -4,7 +4,6 @@
     <h1 class="title" ng-if="currentTaskId > -1">Edit task</h1>
     <button class="button button-clear button-positive" ng-click="closeTask()">Cancel</button>
   </ion-header-bar>
-
   <ion-content>
     <form name="taskForm" ng-submit="submitTask(activeTask)">
       <div class="list">
@@ -12,7 +11,7 @@
           <input name="title" type="text" placeholder="What do?" ng-model="activeTask.title" required>
         </label>
         <div class="form-errors">
-          <span class="form-error" ng-if="taskForm.title.$touched && taskForm.title.$invalid" >
+          <span class="form-error" ng-if="taskForm.title.$touched && taskForm.title.$invalid">
             Arrea can't be empty!
           </span>
         </div>
@@ -39,7 +38,6 @@
           </button>
         </div>
       </div>
-
     </form>
   </ion-content>
 </div>
